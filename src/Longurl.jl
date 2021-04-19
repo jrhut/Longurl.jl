@@ -2,7 +2,14 @@ module Longurl
 export expand_urls
 
 using HTTP
-using DataFrames
+
+"""
+    Urls(expanded_url, status_code)
+"""
+struct Urls
+    expanded_url::Vector{Union{String, Nothing}}
+    status_code::Vector{Union{String, Nothing}}
+end
 
 """
 Takes a list of short urls and exands them into their long form
@@ -12,7 +19,7 @@ Takes a list of short urls and exands them into their long form
 - `urls_to_expand::Array`: the list of short urls
 - `seconds::Int64`: the timeout in seconds
 # Returns
-- `DataFrame`: DataFrame containing the short url, expanded url and status code
+- `Urls`: Struct containing properties expanded_url and status_code
 ...
 """
 function expand_urls(urls_to_expand, seconds=2)
@@ -20,16 +27,16 @@ function expand_urls(urls_to_expand, seconds=2)
     original_stdout = stdout
     original_error = stderr
 
-    short_urls = Array{Union{String, Missing},1}(undef, length(urls_to_expand))
-    expanded_urls = Array{Union{String, Missing},1}(undef, length(urls_to_expand))
-    status_codes = Array{Union{String, Missing},1}(undef, length(urls_to_expand))
+    short_urls = Vector{Union{String, Nothing}}(nothing, length(urls_to_expand))
+    expanded_urls = Vector{Union{String, Nothing}}(nothing, length(urls_to_expand))
+    status_codes = Vector{Union{String, Nothing}}(nothing, length(urls_to_expand))
 
     i = 0
     for url in urls_to_expand
         i += 1
-        last_head = missing
-        last_host = missing
-        last_code = missing
+        last_head = nothing
+        last_host = nothing
+        last_code = nothing
         (rd, wr) = redirect_stdout()
 
         try
@@ -56,9 +63,9 @@ function expand_urls(urls_to_expand, seconds=2)
         end
     end 
     
-    df = DataFrame(orig_url=short_urls, expanded_url=expanded_urls, status_code=status_codes)
+    long_urls = Urls(expanded_urls, status_codes)
 
-    return df
+    return long_urls
 
 end
 
