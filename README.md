@@ -19,7 +19,7 @@ This allows you to use ```using Longurl```
 
 ## Usage
 
-This package provides function expand_urls that will take an array of short urls and return a dataframe with the original url, expanded url and status code. 
+This package provides function expand_urls that will take an array of short urls and return a dataframe with the original url, expanded url and status code. If the request itself fails expanded_url and status_code will equal 'missing'. 
 
 ```
   expand_urls(urls_to_expand)
