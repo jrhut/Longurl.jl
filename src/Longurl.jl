@@ -20,16 +20,16 @@ function expand_urls(urls_to_expand, seconds=2)
     original_stdout = stdout
     original_error = stderr
 
-    short_urls = Array{String,1}(undef, length(urls_to_expand))
-    expanded_urls = Array{String,1}(undef, length(urls_to_expand))
-    status_codes = Array{String,1}(undef, length(urls_to_expand))
+    short_urls = Array{Union{String, Missing},1}(undef, length(urls_to_expand))
+    expanded_urls = Array{Union{String, Missing},1}(undef, length(urls_to_expand))
+    status_codes = Array{Union{String, Missing},1}(undef, length(urls_to_expand))
 
     i = 0
     for url in urls_to_expand
         i += 1
-        last_head = undef
-        last_host = undef
-        last_code = undef
+        last_head = missing
+        last_host = missing
+        last_code = missing
         (rd, wr) = redirect_stdout()
 
         try
