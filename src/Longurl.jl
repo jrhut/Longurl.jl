@@ -20,11 +20,13 @@ function expand_urls(urls_to_expand, seconds=2)
     original_stdout = stdout
     original_error = stderr
 
-    short_urls = []
-    expanded_urls = []
-    status_codes = []
+    short_urls = Array{String,1}(undef, length(urls_to_expand))
+    expanded_urls = Array{String,1}(undef, length(urls_to_expand))
+    status_codes = Array{String,1}(undef, length(urls_to_expand))
 
+    i = 0
     for url in urls_to_expand
+        i += 1
         last_head = missing
         last_host = missing
         last_code = missing
@@ -48,13 +50,13 @@ function expand_urls(urls_to_expand, seconds=2)
                     last_code = split(line, " ")[2]
                 end
             end
-            append!(short_urls, [url])
-            append!(status_codes, [last_code])
-            append!(expanded_urls, [last_host * last_head])
+            short_urls[i] = url
+            status_codes[i] = last_code
+            expanded_urls[i] = last_host * last_head
         end
     end 
     
-    df = DataFrame(short_urls=short_urls, long_urls=expanded_urls, status_codes=status_codes)
+    df = DataFrame(orig_url=short_urls, expanded_url=expanded_urls, status_code=status_codes)
 
     return df
 
