@@ -13,7 +13,7 @@ Pkg.add("DataFrames")
 Pkg.add("HTTP")
 ```
 
-Now all thats left to use this project is starting up the project environment with Pkg.activate("path/to/Longurl.jl")
+Now all thats left to use this project is starting up the project environment with ```Pkg.activate("path/to/Longurl.jl")```
 
 This allows you to use ```using Longurl```
 
