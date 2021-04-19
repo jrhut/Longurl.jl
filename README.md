@@ -29,9 +29,9 @@ Takes a list of short urls and exands them into their long form
 ...
 # Arguments
 - `urls_to_expand::Array`: the list of short urls
-- `seconds::Int64`: the timeout in seconds, default=2
+- `seconds::Int64`: the timeout in seconds
 # Returns
-- `DataFrame`: DataFrame containing the short url, expanded url and status code
+- `Urls`: Struct containing properties expanded_url and status_code
 ...
 ```
 
@@ -42,9 +42,6 @@ expand_urls(["https://tinyurl.com/yfr3dtha"])
 
 ...
 
- Row │ orig_url                      expanded_url     status_code
-     │ String?                       String?          String?          
-─────┼─────────────────────────────────────────────────────────────
-   1 │ https://tinyurl.com/yfr3dtha  www.google.com/  200
+Longurl.Urls(Union{Nothing, String}["www.google.com/"], Union{Nothing, String}["200"])
 
 ```
