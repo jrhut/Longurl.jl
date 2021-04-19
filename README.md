@@ -43,7 +43,7 @@ expand_urls(["https://tinyurl.com/yfr3dtha"])
 ...
 
  Row │ orig_url                      expanded_url     status_code
-     │ Any                           Any              Any          
+     │ String                        String           String          
 ─────┼─────────────────────────────────────────────────────────────
    1 │ https://tinyurl.com/yfr3dtha  www.google.com/  200
 
