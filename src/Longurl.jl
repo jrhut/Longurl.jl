@@ -27,9 +27,9 @@ function expand_urls(urls_to_expand, seconds=2)
     i = 0
     for url in urls_to_expand
         i += 1
-        last_head = missing
-        last_host = missing
-        last_code = missing
+        last_head = undef
+        last_host = undef
+        last_code = undef
         (rd, wr) = redirect_stdout()
 
         try
