@@ -1,4 +1,4 @@
-# longurl.jl
+# Longurl.jl
  A Julia implementation of the R package longurl. For transforming short url's back into their long form. 
  
 ## Installation
