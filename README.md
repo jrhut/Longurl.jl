@@ -19,6 +19,8 @@ This allows you to use ```using Longurl```
 
 ## Usage
 
+This package provides function expand_urls that will take an array of short urls and return a dataframe with the original url, expanded url and status code. 
+
 ```
   expand_urls(urls_to_expand)
   
@@ -40,7 +42,7 @@ expand_urls(["https://tinyurl.com/yfr3dtha"])
 
 ...
 
- Row │ short_urls                    long_urls        status_codes 
+ Row │ orig_url                      expanded_url     status_code
      │ Any                           Any              Any          
 ─────┼─────────────────────────────────────────────────────────────
    1 │ https://tinyurl.com/yfr3dtha  www.google.com/  200
