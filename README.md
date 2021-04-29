@@ -3,17 +3,7 @@
  
 ## Installation
 
-Clone this repository to your local system
-
-Install depencies with
-
-```
-using Pkg
-Pkg.add("DataFrames")
-Pkg.add("HTTP")
-```
-
-Now all thats left to use this project is starting up the project environment with ```Pkg.activate("path/to/Longurl.jl")```
+Install the package using ```Pkg.add(url="https://github.com/jrhut/Longurl.jl")```
 
 This allows you to use ```using Longurl```
 
