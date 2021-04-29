@@ -42,10 +42,7 @@ Takes a short url and expands it into their long form
 ## Examples
 
 ```
+expand_url("https://tinyurl.com/yfr3dtha")
+
 expand_urls(["https://tinyurl.com/yfr3dtha"])
-
-...
-
-Longurl.Urls(Union{Nothing, String}["www.google.com/"], Union{Nothing, String}["200"])
-
 ```
