@@ -7,9 +7,10 @@ using HTTP
 """
     Url(expanded_url, status_code)
 """
-struct Url
-    expanded_url::Union{String, Nothing}
-    status_code::Union{String, Nothing}
+
+struct Urls
+    expanded_url::Vector{Union{String, Nothing}}
+    status_code::Vector{Union{Int64, Nothing}}
 end
 
 
@@ -26,34 +27,38 @@ Takes a short url and expands it into their long form
 """
 function expand_url(url_to_expand::A, seconds::N=2) where {A<:String, N <: Number} 
 
-    original_stdout = stdout
-    original_error = stderr
+    short_url = Vector{Union{String, Nothing}}(nothing, length(urls_to_expand))
+    expanded_url = Vector{Union{String, Nothing}}(nothing, length(urls_to_expand))
+    status_code = Vector{Union{Int64, Nothing}}(nothing, length(urls_to_expand))
 
-    short_url = Union{String, Nothing}
-    expanded_url = Union{String, Nothing}
-    status_code = Union{String, Nothing}
+    i = 0
+    for url in urls_to_expand
+        i += 1
+        last_target = nothing
+        last_host = nothing
+        last_code = nothing
 
-    last_head = nothing
-    last_host = nothing
-    last_code = nothing
-    (rd, wr) = redirect_stdout()
-
-    try
-        HTTP.head(url_to_expand, readtimeout=seconds, verbose=2, retry=false)
-    catch e
-        print(e)
-    finally
-        redirect_stdout(original_stdout)
-        close(wr)  
-        for line in readlines(rd)
-            if occursin("HEAD", line)
-                last_head = split(line, " ")[2]
+        try
+            res = HTTP.get(url, readtimeout=seconds, retry=false, redirect = true, status_exception = false, verbose = 2)
+            req = res.request
+            last_code = res.status
+            print(last_code)
+            for h in req.headers
+                if h[1] == "Host"
+                    last_host = h[2]
+                end
             end
-            if occursin("Host", line)
-                last_host = split(line, " ")[2]
-            end
-            if occursin("HTTP/1.1 ", line)
-                last_code = split(line, " ")[2]
+            last_target = req.target
+               
+        catch e
+            print(e)
+        finally
+            short_urls[i] = url
+            status_codes[i] = last_code
+            if last_host != nothing || last_target != nothing
+                expanded_urls[i] = last_host * last_target
+            else
+                expanded_urls[i] = nothing
             end
         end
         short_url = url_to_expand
