@@ -41,7 +41,7 @@ function expand_url(url_to_expand::A, seconds::N=2) where {A<:String, N <: Numbe
     try
         HTTP.head(url_to_expand, readtimeout=seconds, verbose=2, retry=false)
     catch e
-
+        print(e)
     finally
         redirect_stdout(original_stdout)
         close(wr)  
@@ -79,16 +79,7 @@ Takes a vector of short urls and expands them into their long form
 ...
 """
 function expand_urls(urls_to_expand::A, seconds::N=2) where {A<:Vector{String}, N <: Number} 
-
-    long_urls = Vector{Url}(undef, length(urls_to_expand))
-
-    i = 0
-    for url in urls_to_expand
-        i += 1
-        long_urls[i] = expand_url(url)
-    end
-
-    return long_urls
+    return expand_url.(urls_to_expand)
 end
 
 end
