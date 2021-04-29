@@ -79,7 +79,15 @@ Takes a vector of short urls and expands them into their long form
 ...
 """
 function expand_urls(urls_to_expand::A, seconds::N=2) where {A<:Vector{String}, N <: Number} 
-    return expand_url.(urls_to_expand)
+    urls_to_expand = unique!(urls_to_expand)
+    #part_size = Int(ceil(length(urls_to_expand)/4))
+    #partitions = collect(Iterators.partition(urls_to_expand, part_size))
+
+    #long_urls = Vector{Url}(undef, length(urls_to_expand))
+    long_urls = Threads.foreach(expand_url, urls_to_expand, schedule=Threads.FairSchedule(), ntasks=Threads.nthreads())
+    
+    return long_urls
 end
 
 end
+println(Longurl.expand_urls(["http://google.com", "http://google.com", "http://youtube.com", "http://imgur.com", "http://github.com", "http://facebook.com"]))
