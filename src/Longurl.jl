@@ -86,4 +86,3 @@ function expand_urls(urls_to_expand::A, seconds::N=2) where {A<:Vector{String}, 
 end
 
 end
-
