@@ -25,6 +25,20 @@ Takes a list of short urls and exands them into their long form
 ...
 ```
 
+```
+ expand_url(url_to_expand)
+
+Takes a short url and expands it into their long form
+
+...
+# Arguments
+- `url_to_expand::String`: the short url
+- `seconds::Int64`: the timeout in seconds
+# Returns
+- `Url`: Struct containing properties expanded_url and status_code
+...
+```
+
 ## Examples
 
 ```
