@@ -1,8 +1,7 @@
 name = "Longurl"
 uuid = "84b3e973-5441-4ad4-89a5-c3fe8cb9e093"
 authors = ["Jamie Hutchings"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"

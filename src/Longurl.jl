@@ -1,32 +1,35 @@
 module Longurl
-export expand_urls
+export expand_url, expand_urls
 
 using HTTP
 
+
 """
-    Urls(expanded_url, status_code)
+    Url(expanded_url, status_code)
 """
+
 struct Urls
     expanded_url::Vector{Union{String, Nothing}}
     status_code::Vector{Union{Int64, Nothing}}
 end
 
+
 """
-Takes a list of short urls and exands them into their long form
+Takes a short url and expands it into their long form
 
 ...
 # Arguments
-- `urls_to_expand::Array`: the list of short urls
+- `url_to_expand::String`: the short url
 - `seconds::Int64`: the timeout in seconds
 # Returns
-- `Urls`: Struct containing properties expanded_url and status_code
+- `Url`: Struct containing properties expanded_url and status_code
 ...
 """
-function expand_urls(urls_to_expand::A, seconds::N=2) where {A<:Union{String,Vector{String}}, N <: Number} 
+function expand_url(url_to_expand::A, seconds::N=2) where {A<:String, N <: Number} 
 
-    short_urls = Vector{Union{String, Nothing}}(nothing, length(urls_to_expand))
-    expanded_urls = Vector{Union{String, Nothing}}(nothing, length(urls_to_expand))
-    status_codes = Vector{Union{Int64, Nothing}}(nothing, length(urls_to_expand))
+    short_url = Vector{Union{String, Nothing}}(nothing, length(urls_to_expand))
+    expanded_url = Vector{Union{String, Nothing}}(nothing, length(urls_to_expand))
+    status_code = Vector{Union{Int64, Nothing}}(nothing, length(urls_to_expand))
 
     i = 0
     for url in urls_to_expand
@@ -58,14 +61,30 @@ function expand_urls(urls_to_expand::A, seconds::N=2) where {A<:Union{String,Vec
                 expanded_urls[i] = nothing
             end
         end
-    end 
+        short_url = url_to_expand
+        status_code = last_code
+        expanded_url = last_host * last_head
+    end
     
-    long_urls = Urls(expanded_urls, status_codes)
+    long_url = Url(expanded_url, status_code)
 
-    return long_urls
-
+    return long_url
 end
 
-end # module
 
+"""
+Takes a vector of short urls and expands them into their long form
 
+...
+# Arguments
+- `urls_to_expand::Vector{String}`: the short urls
+- `seconds::Int64`: the timeout in seconds
+# Returns
+- `Url`: Struct containing properties expanded_url and status_code
+...
+"""
+function expand_urls(urls_to_expand::A, seconds::N=2) where {A<:Vector{String}, N <: Number} 
+    return expand_url.(urls_to_expand)
+end
+
+end

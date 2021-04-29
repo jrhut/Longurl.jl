@@ -3,23 +3,13 @@
  
 ## Installation
 
-Clone this repository to your local system
-
-Install depencies with
-
-```
-using Pkg
-Pkg.add("DataFrames")
-Pkg.add("HTTP")
-```
-
-Now all thats left to use this project is starting up the project environment with ```Pkg.activate("path/to/Longurl.jl")```
+Install the package using ```Pkg.add(url="https://github.com/jrhut/Longurl.jl")```
 
 This allows you to use ```using Longurl```
 
 ## Usage
 
-This package provides function expand_urls that will take an array of short urls and return a dataframe with the original url, expanded url and status code. If the request itself fails expanded_url and status_code will equal 'missing'. 
+This package provides function expand_urls that will take an array of short urls and return a dataframe with the original url, expanded url and status code. If the request itself fails expanded_url and status_code will equal 'missing'.
 
 ```
   expand_urls(urls_to_expand)
@@ -35,13 +25,24 @@ Takes a list of short urls and exands them into their long form
 ...
 ```
 
+```
+ expand_url(url_to_expand)
+
+Takes a short url and expands it into their long form
+
+...
+# Arguments
+- `url_to_expand::String`: the short url
+- `seconds::Int64`: the timeout in seconds
+# Returns
+- `Url`: Struct containing properties expanded_url and status_code
+...
+```
+
 ## Examples
 
 ```
+expand_url("https://tinyurl.com/yfr3dtha")
+
 expand_urls(["https://tinyurl.com/yfr3dtha"])
-
-...
-
-Longurl.Urls(Union{Nothing, String}["www.google.com/"], Union{Nothing, String}["200"])
-
 ```
