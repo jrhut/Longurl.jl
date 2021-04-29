@@ -26,6 +26,7 @@ Takes a short url and expands it into their long form
 """
 function expand_url(url_to_expand::A, seconds::N=2) where {A<:String, N <: Number}
     if !startswith(url_to_expand, "http://")
+        println("hit")
         return Url(nothing, nothing)
     end
     
@@ -77,7 +78,8 @@ Takes a vector of short urls and expands them into their long form
 ...
 """
 function expand_urls(urls_to_expand::A, seconds::N=2) where {A<:Vector{String}, N <: Number} 
-    urls_to_expand = unique!(urls_to_expand)
+    #Come up with a way to only work on unique urls but retain order, maybe Dict
+    #urls_to_expand = unique!(urls_to_expand)
 
     results = Vector{Url}(undef, length(urls_to_expand))
 
