@@ -24,6 +24,10 @@ Takes a list of short urls and exands them into their long form
 """
 function expand_urls(urls_to_expand::A, seconds::N=2) where {A<:Union{String,Vector{String}}, N <: Number} 
 
+    if urls_to_expand isa String
+        urls_to_expand = [urls_to_expand]
+    end
+
     original_stdout = stdout
     original_error = stderr
 
