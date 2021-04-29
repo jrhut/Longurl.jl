@@ -1,5 +1,5 @@
 module Longurl
-export expand_urls
+export expand_url, expand_urls
 
 using HTTP
 
