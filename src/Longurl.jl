@@ -24,7 +24,11 @@ Takes a short url and expands it into their long form
 - `Url`: Struct containing properties expanded_url and status_code
 ...
 """
-function expand_url(url_to_expand::A, seconds::N=2) where {A<:String, N <: Number} 
+function expand_url(url_to_expand::A, seconds::N=2) where {A<:String, N <: Number}
+    if !startswith(url_to_expand, "http://")
+        return Url(nothing, nothing)
+    end
+    
     short_url = Union{String, Nothing}
     expanded_url = Union{String, Nothing}
     status_code = Union{String, Nothing}
