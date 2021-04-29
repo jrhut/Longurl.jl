@@ -12,7 +12,7 @@ struct Urls
 end
 
 """
-Takes a list of short urls and exands them into their long form
+Takes a list of short urls and expands them into their long form
 
 ...
 # Arguments
