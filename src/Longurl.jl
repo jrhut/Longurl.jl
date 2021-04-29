@@ -7,10 +7,9 @@ using HTTP
 """
     Url(expanded_url, status_code)
 """
-
-struct Urls
-    expanded_url::Vector{Union{String, Nothing}}
-    status_code::Vector{Union{Int64, Nothing}}
+struct Url
+    expanded_url::Union{String, Nothing}
+    status_code::Union{Int16, Nothing}
 end
 
 
@@ -26,44 +25,34 @@ Takes a short url and expands it into their long form
 ...
 """
 function expand_url(url_to_expand::A, seconds::N=2) where {A<:String, N <: Number} 
+    short_url = Union{String, Nothing}
+    expanded_url = Union{String, Nothing}
+    status_code = Union{String, Nothing}
 
-    short_url = Vector{Union{String, Nothing}}(nothing, length(urls_to_expand))
-    expanded_url = Vector{Union{String, Nothing}}(nothing, length(urls_to_expand))
-    status_code = Vector{Union{Int64, Nothing}}(nothing, length(urls_to_expand))
+    last_target = nothing
+    last_host = nothing
+    last_code = nothing
 
-    i = 0
-    for url in urls_to_expand
-        i += 1
-        last_target = nothing
-        last_host = nothing
-        last_code = nothing
-
-        try
-            res = HTTP.get(url, readtimeout=seconds, retry=false, redirect = true, status_exception = false, verbose = 2)
-            req = res.request
-            last_code = res.status
-            print(last_code)
-            for h in req.headers
-                if h[1] == "Host"
-                    last_host = h[2]
-                end
-            end
-            last_target = req.target
-               
-        catch e
-            print(e)
-        finally
-            short_urls[i] = url
-            status_codes[i] = last_code
-            if last_host != nothing || last_target != nothing
-                expanded_urls[i] = last_host * last_target
-            else
-                expanded_urls[i] = nothing
+    try
+        res = HTTP.get(url_to_expand, readtimeout=seconds, retry=false, redirect = true, status_exception = false)
+        req = res.request
+        last_code = res.status
+        for h in req.headers
+            if h[1] == "Host"
+                last_host = h[2]
             end
         end
-        short_url = url_to_expand
+        last_target = req.target
+    catch e
+        println(e)
+    finally
+        short_urls = url_to_expand
         status_code = last_code
-        expanded_url = last_host * last_head
+        if last_host != nothing || last_target != nothing
+            expanded_url = last_host * last_target
+        else
+            expanded_url = nothing
+        end
     end
     
     long_url = Url(expanded_url, status_code)
@@ -84,7 +73,16 @@ Takes a vector of short urls and expands them into their long form
 ...
 """
 function expand_urls(urls_to_expand::A, seconds::N=2) where {A<:Vector{String}, N <: Number} 
-    return expand_url.(urls_to_expand)
+    urls_to_expand = unique!(urls_to_expand)
+
+    results = Vector{Url}(undef, length(urls_to_expand))
+
+    Threads.@threads for i in 1:length(urls_to_expand)
+        results[i] = expand_url(urls_to_expand[i])
+    end
+
+    return results
+
 end
 
 end

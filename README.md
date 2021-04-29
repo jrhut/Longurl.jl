@@ -11,6 +11,8 @@ This allows you to use ```using Longurl```
 
 This package provides function expand_urls that will take an array of short urls and return a dataframe with the original url, expanded url and status code. If the request itself fails expanded_url and status_code will equal 'missing'.
 
+To take advantage of the multi-threading launch julia with the argument ```--threads n``` e.g. ```julia ---threads 8 test.jl```
+
 ```
   expand_urls(urls_to_expand)
   
