@@ -78,20 +78,10 @@ Takes a vector of short urls and expands them into their long form
 ...
 """
 function expand_urls(urls_to_expand::A, seconds::N=2) where {A<:Vector{String}, N <: Number} 
-    cache = Dict()
-    [cache[x]=undef for x in unique(urls_to_expand)]
-
     results = Vector{Url}(undef, length(urls_to_expand))
 
     Threads.@threads for i in 1:length(urls_to_expand)
-        if cache[urls_to_expand[i]] == undef
-            url = expand_url(urls_to_expand[i])
-            results[i] = url
-            cache[urls_to_expand[i]] = url
-        else
-            println("Duplicate detected using cached url")
-            results[i] = cache[urls_to_expand[i]]
-        end
+        results[i] = expand_url(urls_to_expand[i])
     end
 
     return results
