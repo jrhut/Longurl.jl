@@ -83,14 +83,20 @@ function expand_urls(urls_to_expand::A, seconds::N=2) where {A<:Vector{String}, 
 
     results = Vector{Url}(undef, length(urls_to_expand))
 
-    Threads.@threads for i in 1:length(urls_to_expand)
-        if cache[urls_to_expand[i]] == undef
-            url = expand_url(urls_to_expand[i])
-            results[i] = url
-            cache[urls_to_expand[i]] = url
-        else
-            println("Duplicate detected using cached url")
-            results[i] = cache[urls_to_expand[i]]
+    @sync begin
+        for i in 1:length(urls_to_expand)
+            @async try
+                if cache[urls_to_expand[i]] == undef
+                    url = expand_url(urls_to_expand[i])
+                    results[i] = url
+                    cache[urls_to_expand[i]] = url
+                else
+                    println("Duplicate detected using cached url")
+                    results[i] = cache[urls_to_expand[i]]
+                end
+            catch e
+
+            end
         end
     end
 
