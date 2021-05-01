@@ -8,6 +8,7 @@ using HTTP, SHA, Serialization, URIs
     Url(expanded_url, status_code)
 """
 struct Url
+    original_url::String
     expanded_url::Union{String, Nothing}
     status_code::Union{Int16, Nothing}
 end
@@ -62,7 +63,7 @@ Takes a short url and expands it into their long form
 function expand_url(url_to_expand::A, seconds::N=2, cache::String="") where {A<:String, N <: Number}
     if !startswith(url_to_expand, r"http://|https://")
         println(url_to_expand, " Invalid url no http[s]://...")
-        return Url(nothing, nothing)
+        return Url(url_to_expand, nothing, nothing)
     end
     
     short_url = Union{String, Nothing}
@@ -90,7 +91,7 @@ function expand_url(url_to_expand::A, seconds::N=2, cache::String="") where {A<:
         last_target = req.target
     catch e
         http_get_cache_clear(url_to_expand, cache)
-        println(e)
+        println(url_to_expand, " ", e)
     finally
         short_urls = url_to_expand
         status_code = last_code
@@ -105,7 +106,7 @@ function expand_url(url_to_expand::A, seconds::N=2, cache::String="") where {A<:
         http_get_cache_clear(url_to_expand, cache)
     end
     
-    long_url = Url(expanded_url, status_code)
+    long_url = Url(url_to_expand, expanded_url, status_code)
 
     return long_url
 end
@@ -123,23 +124,22 @@ Takes a vector of short urls and expands them into their long form
 ...
 """
 function expand_urls(urls_to_expand::A, seconds::N=2, cache::String="") where {A<:Vector{String}, N <: Number} 
-    results = Vector{Url}(undef, length(urls_to_expand))
+    cache_mem = Dict()
+    [cache_mem[x]=undef for x in unique(urls_to_expand)]
 
+    results = Vector{Url}(undef, length(urls_to_expand))
     urls_to_expand = sort(urls_to_expand, by=x->URI(x).host)
-    println(urls_to_expand)
 
     Threads.@threads for i in 1:length(urls_to_expand)
+        if cache_mem[urls_to_expand[i]] == undef
             url = expand_url(urls_to_expand[i], seconds, cache)
             results[i] = url
-
-        println(URI(urls_to_expand[i]).host)
-        
-        if URI(urls_to_expand[i]).host in ["ow.ly"]
-            sleep(10)
+            cache_mem[urls_to_expand[i]] = url
         else
-            sleep(1)
+            println("Duplicate detected using cached url")
+            results[i] = cache_mem[urls_to_expand[i]]
         end
-
+        sleep(1)
     end
 
     return results
