@@ -1,7 +1,7 @@
 module Longurl
 export expand_url, expand_urls
 
-using HTTP, SHA, Serialization
+using HTTP, SHA, Serialization, URIs
 
 
 """
@@ -123,20 +123,23 @@ Takes a vector of short urls and expands them into their long form
 ...
 """
 function expand_urls(urls_to_expand::A, seconds::N=2, cache::String="") where {A<:Vector{String}, N <: Number} 
-    cache = Dict()
-    [cache[x]=undef for x in unique(urls_to_expand)]
-
     results = Vector{Url}(undef, length(urls_to_expand))
 
+    urls_to_expand = sort(urls_to_expand, by=x->URI(x).host)
+    println(urls_to_expand)
+
     Threads.@threads for i in 1:length(urls_to_expand)
-        if cache[urls_to_expand[i]] == undef
             url = expand_url(urls_to_expand[i], seconds, cache)
             results[i] = url
-            cache[urls_to_expand[i]] = url
+
+        println(URI(urls_to_expand[i]).host)
+        
+        if URI(urls_to_expand[i]).host in ["ow.ly"]
+            sleep(10)
         else
-            println("Duplicate detected using cached url")
-            results[i] = cache[urls_to_expand[i]]
+            sleep(1)
         end
+
     end
 
     return results
