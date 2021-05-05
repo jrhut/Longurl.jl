@@ -73,6 +73,7 @@ function expand_url(url_to_expand::A, seconds::N=2, cache::String="") where {A<:
     last_target = nothing
     last_host = nothing
     last_code = nothing
+    expanded_url = nothing
 
     try
         if cache != ""
@@ -93,11 +94,23 @@ function expand_url(url_to_expand::A, seconds::N=2, cache::String="") where {A<:
         if cache != ""
             http_get_cache_clear(url_to_expand, cache)
         end
-        println(url_to_expand, " ", e)
+        msg = sprint(showerror, e)
+        if contains(msg, "IOError")
+            caught_url = match(r"http[s]*://(.*)$", msg)
+            if caught_url != nothing
+                url_str = caught_url.match[1:end-2]
+                if url_str != url_to_expand
+                    println("Caught url ", url_str)
+                    expanded_url = string(url_str)
+                    status_code = 200
+                end
+            end
+        end
+        println(sprint(showerror, e))
     finally
         short_urls = url_to_expand
         status_code = last_code
-        if last_host != nothing || last_target != nothing
+        if expanded_url == nothing && last_host != nothing || last_target != nothing
             expanded_url = last_host * last_target
         else
             expanded_url = nothing
@@ -136,7 +149,7 @@ function expand_urls(urls_to_expand::A, seconds::N=2, cache::String="") where {A
         if cache_mem[urls_to_expand[i]] == undef
             url = expand_url(urls_to_expand[i], seconds, cache)
             results[i] = url
-            cache_mem[urls_to_expand[i]] = url
+            cache_mem[urls_to_expand[i]] = undef
         else
             println("Duplicate detected using cached url")
             results[i] = cache_mem[urls_to_expand[i]]
