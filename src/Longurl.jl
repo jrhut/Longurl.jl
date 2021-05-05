@@ -90,7 +90,9 @@ function expand_url(url_to_expand::A, seconds::N=2, cache::String="") where {A<:
         end
         last_target = req.target
     catch e
-        http_get_cache_clear(url_to_expand, cache)
+        if cache != ""
+            http_get_cache_clear(url_to_expand, cache)
+        end
         println(url_to_expand, " ", e)
     finally
         short_urls = url_to_expand
@@ -102,7 +104,7 @@ function expand_url(url_to_expand::A, seconds::N=2, cache::String="") where {A<:
         end
     end
 
-    if status_code != 200
+    if status_code != 200 && cache != ""
         http_get_cache_clear(url_to_expand, cache)
     end
     
