@@ -59,7 +59,7 @@ Takes a short url and expands it into their long form
 - `Url`: Struct containing properties expanded_url and status_code
 ...
 """
-function expand_url(url_to_expand::A, seconds::N=2, cache::String="") where {A<:String, N <: Number}
+function expand_url(url_to_expand::A, seconds::N=2, cache::String="", cache_errors::Bool=false) where {A<:String, N <: Number}
     if !startswith(url_to_expand, r"http://|https://")
         println(url_to_expand, " Invalid url no http[s]://...")
         return Url(nothing, nothing)
@@ -89,7 +89,9 @@ function expand_url(url_to_expand::A, seconds::N=2, cache::String="") where {A<:
         end
         last_target = req.target
     catch e
-        http_get_cache_clear(url_to_expand, cache)
+        if cache_errors == false
+            http_get_cache_clear(url_to_expand, cache)
+        end 
         println(e)
     finally
         short_urls = url_to_expand
@@ -101,7 +103,7 @@ function expand_url(url_to_expand::A, seconds::N=2, cache::String="") where {A<:
         end
     end
 
-    if status_code != 200
+    if status_code != 200 && cache_errors == false
         http_get_cache_clear(url_to_expand, cache)
     end
     
