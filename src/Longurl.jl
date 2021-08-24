@@ -1,7 +1,7 @@
 module Longurl
 export expand_url, expand_urls
 
-using HTTP, SHA, Serialization
+using HTTP, SHA, Serialization, URIs
 
 
 """

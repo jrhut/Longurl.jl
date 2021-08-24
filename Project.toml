@@ -1,7 +1,7 @@
 name = "Longurl"
 uuid = "84b3e973-5441-4ad4-89a5-c3fe8cb9e093"
 authors = ["Jamie Hutchings"]
-version = "0.1.7"
+version = "0.1.8"
 
 [deps]
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
