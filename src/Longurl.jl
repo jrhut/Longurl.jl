@@ -124,21 +124,23 @@ Takes a vector of short urls and expands them into their long form
 - `Url`: Struct containing properties expanded_url and status_code
 ...
 """
-function expand_urls(urls_to_expand::A, seconds::N=2, cache::String="") where {A<:Vector{String}, N <: Number} 
-    cache = Dict()
-    [cache[x]=undef for x in unique(urls_to_expand)]
+function expand_urls(urls_to_expand::A, seconds::N=2, cache::String="", cache_errors::Bool=false) where {A<:Vector{String}, N <: Number} 
+    cache_mem = Dict()
+    [cache_mem[x]=undef for x in unique(urls_to_expand)]
 
     results = Vector{Url}(undef, length(urls_to_expand))
+    urls_to_expand = sort(urls_to_expand, by=x->URI(x).host)
 
     Threads.@threads for i in 1:length(urls_to_expand)
-        if cache[urls_to_expand[i]] == undef
-            url = expand_url(urls_to_expand[i], seconds, cache)
+        if cache_mem[urls_to_expand[i]] == undef
+            url = expand_url(urls_to_expand[i], seconds, cache, cache_errors)
             results[i] = url
-            cache[urls_to_expand[i]] = url
+            cache_mem[urls_to_expand[i]] = undef
         else
             println("Duplicate detected using cached url")
-            results[i] = cache[urls_to_expand[i]]
+            results[i] = cache_mem[urls_to_expand[i]]
         end
+        sleep(1)
     end
 
     return results
