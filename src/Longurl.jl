@@ -77,7 +77,7 @@ function expand_url(url_to_expand::A, seconds::N=2, cache::String="", cache_erro
         if cache != ""
             res = http_get_cache(url_to_expand, cache)
         else
-            res = HTTP.get(url_to_expand, readtimeout=seconds, retry=false, redirect = true, status_exception = false)
+            res = HTTP.get(url_to_expand, readtimeout=seconds, retry=false, redirect = true, status_exception = false, require_ssl_verification = false)
         end
 
         req = res.request
