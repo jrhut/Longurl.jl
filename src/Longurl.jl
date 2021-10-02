@@ -32,7 +32,7 @@ function http_get_cache(url, cache_folder, seconds_expire = 60 * 60 * 24 * 60, d
     else
     # Otherwise do a HTTP request, then return and cache it.
         debug && println("Caching $(url)")
-        response = HTTP.get(url, status_exception = false, retry=false, redirect = true)
+        response = HTTP.get(url, status_exception = false, retry=false, redirect = true, require_ssl_verification = false)
         serialize(filename, response)
         return response
     end
